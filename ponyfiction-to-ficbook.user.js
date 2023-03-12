@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Ponyfiction to Ficbook Export
-// @version     0.1
+// @version     0.2
 // @description Экспорт открытой страницы понификшена в виде текста для заливки на фикбук
 // @include     http*://ponyfiction.org/story/*
 // @author      makise_homura
@@ -38,6 +38,9 @@ var text = Array.from(document.querySelectorAll('div.chapter-text-block')).map(o
 
   // Add newlines back at the end of paragraphs and in the line breaks
   txt = txt.replaceAll('</p>','\n').replaceAll('<br>','\n')
+
+  // Remove next chapter links
+  txt = txt.replaceAll(/<p class=\"next-chapter-link\">(.*)/g,'');
 
   // Change right-aligned paragraphs to right-block
   txt = txt.replaceAll(/<p align=\"right\">(.*)/g,'<right>$1</right>');
