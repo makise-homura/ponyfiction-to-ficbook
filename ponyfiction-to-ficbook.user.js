@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Ponyfiction to Ficbook Export
-// @version     0.2
+// @version     0.3
 // @description Экспорт открытой страницы понификшена в виде текста для заливки на фикбук
 // @include     http*://ponyfiction.org/story/*
 // @author      makise_homura
@@ -60,10 +60,14 @@ var text = Array.from(document.querySelectorAll('div.chapter-text-block')).map(o
 // Create a link and allow download
 chaptername = document.querySelector('.breadcrumb li.active').textContent;
 var link = document.createElement('a');
-link.setAttribute('title', 'Скачать для фикбука');
-link.setAttribute('class', 'get ficbook');
 link.setAttribute('data-noajax', '1');
 link.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
 link.setAttribute('download', chaptername + '.txt');
-link.style.background = 'url(https://www.google.com/s2/favicons?domain=ficbook.net)';
-document.querySelector(".get.fb2").after(link);
+document.querySelector(".more-info").childNodes.forEach(p =>
+{
+    if(p.textContent.match("Скачать"))
+    {
+        p.append(", ");
+        p.after(link);
+    }
+});
