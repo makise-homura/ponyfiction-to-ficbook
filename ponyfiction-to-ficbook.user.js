@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Ponyfiction to Ficbook Export
-// @version     0.3.4
+// @version     0.3.5
 // @description Экспорт открытой страницы понификшена в виде текста для заливки на фикбук
 // @include     http*://ponyfiction.org/story/*
 // @author      makise_homura
@@ -14,15 +14,33 @@ if(document.querySelectorAll('div.chapter-text-block').length > 0)
     var text = Array.from(document.querySelectorAll('div.chapter-text-block')).map(obj =>
     {
       var txt = obj.innerHTML;
+      var span = document.createElement('span');
+      span.innerHTML = txt;
+
+      // Process footnotes
+      span.querySelectorAll('* a.footnote-link').forEach(a =>
+      {
+        a.innerHTML = '<footnote>' + span.querySelector('div#'+a.href.replaceAll(/.*#/g,'')).textContent.replaceAll(/.*↑ /g, '') + '</footnote>';
+      });
+
+      // Remove headers, chapter comment, fonts, footnote blocks
+      ['h2', 'blockquote', 'font', 'div'].forEach(t =>
+      {
+          span.querySelectorAll(t).forEach(p => p.parentNode.removeChild(p));
+      });
+
+      txt = span.innerHTML;
 
       // Remove newlines
       txt = txt.replaceAll('\n','');
 
-      // Remove headers
-      txt = txt.replaceAll(/<h2>.*<\/h2>/g,'');
-
       // Replace <hr> with astericks
       txt = txt.replaceAll('<hr>','\n<center>* * *</center>\n');
+
+      // Remove tags enclosing subscript, superscript, links
+      txt = txt.replaceAll('<sup>','').replaceAll('</sup>','');
+      txt = txt.replaceAll('<sub>','').replaceAll('</sub>','');
+      txt = txt.replaceAll(/<a [^>]*>/g,'').replaceAll('</a>','');
 
       // Replace spaces at the start of the line
       txt = txt.replaceAll(/^\s*/g,'');
