@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Ponyfiction to Ficbook Export
-// @version     0.4
+// @version     0.4.1
 // @description Экспорт открытой страницы понификшена в виде текста для заливки на фикбук
 // @include     http*://ponyfiction.org/story/*
 // @author      makise_homura
@@ -36,7 +36,7 @@ link.addEventListener("click", () =>
         // Process footnotes
         span.querySelectorAll('* a.footnote-link').forEach(a =>
         {
-          a.innerHTML = '<footnote>' + span.querySelector('div#'+a.href.replaceAll(/.*#/g,'')).textContent.replaceAll(/.*↑ /g, '') + '</footnote>';
+          a.innerHTML = '<footnote>' + span.querySelector('div#' + decodeURIComponent(a.href).replaceAll(/.*#/g,'')).textContent.replaceAll(/.*↑ /g, '') + '</footnote>';
         });
 
         // Remove headers, chapter comment, fonts, footnote blocks
